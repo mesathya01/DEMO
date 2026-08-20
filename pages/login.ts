@@ -1,5 +1,4 @@
 
-
 import { expect, Page, Locator } from '@playwright/test';
 
 export class LoginPage {
@@ -13,6 +12,7 @@ export class LoginPage {
    readonly cart: Locator;
    readonly checkout: Locator;
    readonly checkoutInfo: Locator;
+   readonly checkoutError: Locator;
    readonly checkoutSummary: Locator;
    readonly checkoutComplete: Locator;
    readonly firstName: Locator;
@@ -37,6 +37,7 @@ export class LoginPage {
       this.cart = page.locator('[data-test="shopping-cart-link"]');
       this.checkout = page.locator('[data-test="checkout"]');
       this.checkoutInfo = page.locator('[data-test="title"]');
+      this.checkoutError = page.locator('[data-test="error"]');
       this.checkoutSummary = page.locator('[data-test="checkout-summary-container"]');
       this.checkoutComplete = page.locator('[data-test="checkout-complete-container"]');
       this.firstName = page.locator('[data-test="firstName"]');
@@ -51,6 +52,7 @@ export class LoginPage {
    }
 
    async login(user: string, pass: string, url: string) {
+      await this.page.goto(url);
       await this.username.fill(user);
       await this.password.fill(pass);
       await this.submit.click();
@@ -76,6 +78,10 @@ export class LoginPage {
       await this.continue.click();
    }
 
+   async submitEmptyCheckoutForm() {
+      await this.continue.click();
+   }
+
    async getCheckoutSummaryText(): Promise<string> {
       return this.checkoutSummary.innerText();
    }
@@ -95,4 +101,4 @@ export class LoginPage {
       await this.logout.click();
    }
 }
-//}
+
