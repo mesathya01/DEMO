@@ -23,7 +23,7 @@ export class LoginPage {
    readonly openmenu: Locator;
    readonly logout: Locator;
    readonly productname: Locator;
-   
+
    constructor(page: Page) {
       this.page = page;
       this.username = page.locator('[data-test="username"]');
@@ -35,15 +35,15 @@ export class LoginPage {
          page.locator(`[data-test="add-to-cart-${productName}"]`);
 
       this.cart = page.locator('[data-test="shopping-cart-link"]');
-   this.checkout = page.locator('[data-test="checkout"]');
-   this.checkoutInfo = page.locator('[data-test="title"]');
-   this.checkoutSummary = page.locator('[data-test="checkout-summary-container"]');
-   this.checkoutComplete = page.locator('[data-test="checkout-complete-container"]');
-   this.firstName = page.locator('[data-test="firstName"]');
-   this.lastName = page.locator('[data-test="lastName"]');
-   this.postalCode = page.locator('[data-test="postalCode"]');
-   this.continue = page.locator('[data-test="continue"]');
-   this.finish = page.locator('[data-test="finish"]');
+      this.checkout = page.locator('[data-test="checkout"]');
+      this.checkoutInfo = page.locator('[data-test="title"]');
+      this.checkoutSummary = page.locator('[data-test="checkout-summary-container"]');
+      this.checkoutComplete = page.locator('[data-test="checkout-complete-container"]');
+      this.firstName = page.locator('[data-test="firstName"]');
+      this.lastName = page.locator('[data-test="lastName"]');
+      this.postalCode = page.locator('[data-test="postalCode"]');
+      this.continue = page.locator('[data-test="continue"]');
+      this.finish = page.locator('[data-test="finish"]');
       this.openmenu = page.getByRole('button', { name: 'Open Menu' });
       this.logout = page.locator('[data-test="logout-sidebar-link"]');
       this.productname = page.locator('[data-test="inventory-item-name"]');
