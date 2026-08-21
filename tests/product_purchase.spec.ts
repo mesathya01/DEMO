@@ -1,4 +1,3 @@
-import { Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth-fixtures';
 import { LoginPage } from '../pages/login';
 import { ProductPage } from '../pages/product';
@@ -9,71 +8,49 @@ import {
   checkoutData,
   checkoutStepOneUrlPattern,
   inventoryUrlPattern,
-  mockImageFailure,
   products,
   products_filter,
   selectedProductId
 } from '../data/testData';
 
 
-let page: Page;
 let loginPage: LoginPage;
 let productPage: ProductPage;
 let checkoutPage: CheckoutPage;
 
 test.describe('Purchase flow', () => {
   test.beforeAll(async ({ authPage }) => {
-    page = authPage;
-    loginPage = new LoginPage(page);
-    productPage = new ProductPage(page);
-    checkoutPage = new CheckoutPage(page);
+    loginPage = new LoginPage(authPage);
+    productPage = new ProductPage(authPage);
+    checkoutPage = new CheckoutPage(authPage);
   });
 
-  test('Application name validation ', async () => {
-    await expect(page).toHaveURL(inventoryUrlPattern);
+  test('Application name validation ', async ({ authPage }) => {
+    await expect(authPage).toHaveURL(inventoryUrlPattern);
     await expect(productPage.title).toBeVisible();
     await expect(productPage.title).toHaveText(applicationName);
   });
 
-  test('Add the product to cart', async () => {
+  test('Add the product to cart', async ({ authPage }) => {
     await productPage.filterProducts(products_filter[3]);
     await productPage.addToCart(selectedProductId);
     expect(await productPage.productname.textContent()).toContain(products[selectedProductId]);
   });
 
 
-  //This website Does not support API but if it works this mock of the API works 
-  // test('checkout is blocked when the cart page returns 500', async () => {
-  //   const cartRoute = '**/cart.html';
-  //   let mockResponseStatus: number | undefined;
-
-  //   await page.route(cartRoute, async (route) => {
-  //     mockResponseStatus = mockImageFailure.status;
-  //     await route.fulfill({
-  //       status: mockImageFailure.status,
-  //       contentType: mockImageFailure.contentType,
-  //       body: mockImageFailure.body
-  //     });
-  //   }, { times: 1 });
-
-  //   try {
-  //     await page.reload();
-  //     await expect.poll(() => mockResponseStatus).toBe(mockImageFailure.status);
-  //     await expect(loginPage.checkout).not.toBeVisible();
-  //   } finally {
-  //     await page.unroute(cartRoute);
-  //     await page.reload();
-  //   }
+  // This website does not support the mocked API scenario, so the example stays disabled.
+  // test('uses the mock fixture', async ({ mockPage }) => {
+  //   await mockPage.reload();
   // });
 
-  test('checkout shows an error when first name is missing', async () => {
+  test('checkout shows an error when first name is missing', async ({ authPage }) => {
     await checkoutPage.openCheckout();
-    await expect(page).toHaveURL(checkoutStepOneUrlPattern);
+    await expect(authPage).toHaveURL(checkoutStepOneUrlPattern);
     await checkoutPage.submitEmptyCheckoutForm();
     await expect(checkoutPage.checkoutError).toHaveText(checkoutData.firstNameRequiredError);
   });
 
-  test('checkout', async () => {
+  test('checkout', async ({ authPage }) => {
     await checkoutPage.checkoutProduct(
       checkoutCustomer.firstName,
       checkoutCustomer.lastName,

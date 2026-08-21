@@ -33,6 +33,22 @@ export const test = base.extend<{}, AuthFixtures>({
       await context.close();
     }
   }, { scope: 'worker' }],
+  // Mock fixture intentionally disabled because this website does not support the mocked API scenario.
+  // mockPage: [async ({ authPage }, use) => {
+  //   await authPage.route(mockImageFailure.route, async (route) => {
+  //     await route.fulfill({
+  //       status: mockImageFailure.status,
+  //       contentType: mockImageFailure.contentType,
+  //       body: mockImageFailure.body
+  //     });
+  //   });
+  //
+  //   try {
+  //     await use(authPage);
+  //   } finally {
+  //     await authPage.unroute(mockImageFailure.route);
+  //   }
+  // }, { scope: 'worker' }]
 });
 
 export { expect } from '@playwright/test';
