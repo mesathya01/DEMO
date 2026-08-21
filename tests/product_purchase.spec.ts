@@ -1,6 +1,8 @@
 import { Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth-fixtures';
 import { LoginPage } from '../pages/login';
+import { ProductPage } from '../pages/product';
+import { CheckoutPage } from '../pages/checkout';
 import {
   applicationName,
   checkoutCustomer,
@@ -13,26 +15,30 @@ import {
   selectedProductId
 } from '../data/testData';
 
-test.describe('Purchase flow', () => {
-  
-  let page: Page;
-  let loginPage: LoginPage;
 
+let page: Page;
+let loginPage: LoginPage;
+let productPage: ProductPage;
+let checkoutPage: CheckoutPage;
+
+test.describe('Purchase flow', () => {
   test.beforeAll(async ({ authPage }) => {
     page = authPage;
     loginPage = new LoginPage(page);
+    productPage = new ProductPage(page);
+    checkoutPage = new CheckoutPage(page);
   });
 
   test('Application name validation ', async () => {
     await expect(page).toHaveURL(inventoryUrlPattern);
-    await expect(loginPage.title).toBeVisible();
-    await expect(loginPage.title).toHaveText(applicationName);
+    await expect(productPage.title).toBeVisible();
+    await expect(productPage.title).toHaveText(applicationName);
   });
 
   test('Add the product to cart', async () => {
-    await loginPage.filterProducts(products_filter[3]);
-    await loginPage.addToCart(selectedProductId);
-    expect(await loginPage.productname.textContent()).toContain(products[selectedProductId]);
+    await productPage.filterProducts(products_filter[3]);
+    await productPage.addToCart(selectedProductId);
+    expect(await productPage.productname.textContent()).toContain(products[selectedProductId]);
   });
 
 
@@ -61,14 +67,14 @@ test.describe('Purchase flow', () => {
   // });
 
   test('checkout shows an error when first name is missing', async () => {
-    await loginPage.openCheckout();
+    await checkoutPage.openCheckout();
     await expect(page).toHaveURL(checkoutStepOneUrlPattern);
-    await loginPage.submitEmptyCheckoutForm();
-    await expect(loginPage.checkoutError).toHaveText(checkoutData.firstNameRequiredError);
+    await checkoutPage.submitEmptyCheckoutForm();
+    await expect(checkoutPage.checkoutError).toHaveText(checkoutData.firstNameRequiredError);
   });
 
   test('checkout', async () => {
-    await loginPage.checkoutProduct(
+    await checkoutPage.checkoutProduct(
       checkoutCustomer.firstName,
       checkoutCustomer.lastName,
       checkoutCustomer.postalCode
@@ -78,9 +84,9 @@ test.describe('Purchase flow', () => {
     const summaryPattern = new RegExp(
       `${checkoutData.paymentInformation}[\\s\\S]*${checkoutData.shippingInformation}[\\s\\S]*${checkoutData.priceTotal}[\\s\\S]*${checkoutData.itemTotal}[\\s\\S]*${checkoutData.tax}[\\s\\S]*${checkoutData.total}`
     );
-    await loginPage.validateCheckoutSummary(summaryPattern);
-    await loginPage.finishCheckout();
-    await expect(loginPage.checkoutComplete).toContainText(checkoutData.completionMessage);
+    await checkoutPage.validateCheckoutSummary(summaryPattern);
+    await checkoutPage.finishCheckout();
+    await expect(checkoutPage.checkoutComplete).toContainText(checkoutData.completionMessage);
   });
 
   test.afterAll(async () => {
