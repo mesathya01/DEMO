@@ -1,5 +1,10 @@
 import { Page, Locator } from '@playwright/test';
 
+export type ProductDetails = {
+   name: string;
+   price: string;
+};
+
 export class ProductPage {
    readonly page: Page;
    readonly title: Locator;
@@ -7,6 +12,7 @@ export class ProductPage {
    readonly addToCartButton: (productName: string) => Locator;
    readonly cart: Locator;
    readonly productname: Locator;
+   readonly inventoryContainer: Locator;
 
    constructor(page: Page) {
       this.page = page;
@@ -16,10 +22,26 @@ export class ProductPage {
          page.locator(`[data-test="add-to-cart-${productName}"]`);
       this.cart = page.locator('[data-test="shopping-cart-link"]');
       this.productname = page.locator('[data-test="inventory-item-name"]');
+      this.inventoryContainer = page.locator('[data-test="inventory-container"]');
    }
 
    async filterProducts(option: string) {
       await this.filter.selectOption(option);
+   }
+
+   async getAllProducts(): Promise<ProductDetails[]> {
+      const items = this.inventoryContainer.locator('[data-test="inventory-item"]');
+      const products: ProductDetails[] = [];
+
+      for (let index = 0; index < await items.count(); index++) {
+         const item = items.nth(index);
+         products.push({
+            name: (await item.locator('[data-test="inventory-item-name"]').textContent())?.trim() ?? '',
+            price: (await item.locator('[data-test="inventory-item-price"]').textContent())?.trim() ?? ''
+         });
+      }
+
+      return products;
    }
 
    async addToCart(productName: string) {
