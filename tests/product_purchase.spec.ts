@@ -37,7 +37,6 @@ test.describe('Purchase flow', () => {
     expect(await productPage.productname.textContent()).toContain(products[selectedProductId]);
   });
 
-
   // This website does not support the mocked API scenario, so the example stays disabled.
   // test('uses the mock fixture', async ({ mockPage }) => {
   //   await mockPage.reload();
@@ -56,7 +55,6 @@ test.describe('Purchase flow', () => {
       checkoutCustomer.lastName,
       checkoutCustomer.postalCode
     );
-
 
     const summaryPattern = new RegExp(
       `${checkoutData.paymentInformation}[\\s\\S]*${checkoutData.shippingInformation}[\\s\\S]*${checkoutData.priceTotal}[\\s\\S]*${checkoutData.itemTotal}[\\s\\S]*${checkoutData.tax}[\\s\\S]*${checkoutData.total}`
